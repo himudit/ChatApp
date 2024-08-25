@@ -12,7 +12,7 @@ function Signup() {
         password: ""
     })
 
-    //Signup
+    //Sigp
     const signupUser = async (e) => {
         e.preventDefault();
         try {
