@@ -8,6 +8,7 @@ import Home from './components/Home';
 import Profile from './components/Profile'
 
 function App() {
+
   const [count, setCount] = useState(0)
   const router = createBrowserRouter(
     createRoutesFromElements(
