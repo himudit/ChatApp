@@ -1,23 +1,36 @@
 import React, { useState } from 'react'
-// import { account } from '../appwrite/appwriteConfig'
-// import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import { doCreateUserWithEmailAndPassword } from '../firebase/auth'
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase/firebase';
 
 function Signup() {
-    // const navigate = useNavigate()
     const [user, setUser] = useState({
         name: "",
         email: "",
         password: ""
     })
 
-    //Sigp
+    //SignUp
     const signupUser = async (e) => {
         e.preventDefault();
         try {
-            await doCreateUserWithEmailAndPassword(user.email, user.password, user.name);
-            // alert("Registration successful! Please check your email for verification.");
+            const res = await doCreateUserWithEmailAndPassword(user.email, user.password, user.name);
+            const userId = res.user.uid; // Firebase UID from the authentication response
+
+            await setDoc(doc(db, "users", userId), {
+                username: user.name,
+                email: user.email,
+                id: userId, // Use Firebase UID
+                blocked: []
+            });
+
+            // Set the userchats document in Firestore
+            await setDoc(doc(db, "userchats", userId), {
+                chats: []
+            });
+            
+            console.log("no err");
         }
         catch (err) {
             console.log(err);
