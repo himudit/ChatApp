@@ -8,14 +8,13 @@ export const useUserStore = create((set) => ({
     // isLoading : 
     fetchUserInfo: async (uid) => {
         if (!uid) return set({ currentUser: null });
-
         try {
-            const docRef = doc(db, "users", "uid");
+            const docRef = doc(db, "users", uid);
             const docSnap = await getDoc(docRef);
-
+            
             if (docSnap.exists()) {
                 set({ currentUser: docSnap.data() });
-            }else{
+            } else {
                 set({ currentUser: null });
             }
         } catch (err) {

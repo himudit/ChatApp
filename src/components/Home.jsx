@@ -1,24 +1,27 @@
-import React from 'react'
+import React, { useEffect } from 'react';
 import List from './list/List';
 import Chat from './chat/Chat';
 import Detail from './detail/Detail';
-import { useUserStore } from './firebase/userStore';
-import { doc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase/firebase';
-import Login from './Login'
+import { useUserStore } from '../firebase/userStore';
+import Login from './Login';
+import { onAuthStateChange } from '../firebase/auth';
 
 function Home() {
+  const { currentUser, fetchUserInfo } = useUserStore();
 
-  const { currentUser, fetchUserInfo } = useUserStore()
+  useEffect(() => {
+    const unsubscribe = onAuthStateChange((user) => {
+      if (user) {
+        fetchUserInfo(user.uid); 
+      } else {
+        fetchUserInfo(null); 
+      }
+    });
 
-  // useEffect(() => {
+    return () => unsubscribe();
+  }, [fetchUserInfo]);
 
-  //   return () => {
-  //     second
-  //   }
-  // }, [third])
-
-
+  console.log(currentUser);
   return (
     <div className='container'>
       {currentUser ? (
@@ -26,12 +29,12 @@ function Home() {
           <List />
           <Chat />
           <Detail />
-        </>) : (
+        </>
+      ) : (
         <Login />
       )}
-
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
