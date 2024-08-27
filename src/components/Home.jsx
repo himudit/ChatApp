@@ -22,6 +22,7 @@ function Home() {
   }, [fetchUserInfo]);
 
   console.log(currentUser);
+  
   return (
     <div className='container'>
       {currentUser ? (
