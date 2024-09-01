@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import './adduser.css'
-import { collection, getDoc, query, serverTimestamp, setDoc, where, doc } from 'firebase/firestore'
+import { collection, getDoc, query, serverTimestamp, setDoc, where, doc, updateDoc, arrayUnion } from 'firebase/firestore'
 import { db } from '../../../firebase/firebase'
-import { getDocs } from 'firebase/firestore/lite';
+import { getDocs } from 'firebase/firestore';
+import { useUserStore } from '../../../firebase/userStore';
 
 function AddUser() {
   const [user, setUser] = useState(null);
+  const { currentUser } = useUserStore()
 
-  const handleSearch = async (e) => {
+  const handleSearch = async e => {
     e.preventDefault()
     const formData = new FormData(e.target)
     const username = formData.get('username');
@@ -27,12 +29,33 @@ function AddUser() {
 
   const handleAdd = async () => {
     const chatRef = collection(db, "chats")
-    const userChatRef = collection(db, "userchats")
+    const userChatsRef = collection(db, "userchats");
+
     try {
       const newChatRef = doc(chatRef)
       await setDoc(newChatRef, {
         createdAt: serverTimestamp(),
         messages: [],
+      })
+
+      await updateDoc(doc(userChatsRef, user.id), {
+        chats: arrayUnion({
+          chatId: newChatRef.id,
+          lastMessage: "",
+          receiverId: currentUser.id,
+          updatedAt: Date.now(),
+        }
+        )
+      });
+
+      await updateDoc(doc(userChatsRef, currentUser.id), {
+        chats: arrayUnion({
+          chatId: newChatRef.id,
+          lastMessage: "",
+          receiverId: user.id,
+          updatedAt: Date.now(),
+        }
+        )
       })
 
       console.log(newChatRef.id)

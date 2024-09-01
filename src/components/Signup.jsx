@@ -29,8 +29,6 @@ function Signup() {
             await setDoc(doc(db, "userchats", userId), {
                 chats: []
             });
-            
-            console.log("no err");
         }
         catch (err) {
             console.log(err);

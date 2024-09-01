@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './chatList.css'
 import AddUser from '../../chat/addUser/AddUser';
 import { useUserStore } from '../../../firebase/userStore';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../../firebase/firebase';
 
 function Chatlist() {
@@ -46,35 +46,21 @@ function Chatlist() {
         }} />
       </div>
       {chats.map(chat => (
-        //   <div className="item">
-        //   <img src="./avatar.png" />
-        //   <div className="texts">
-        //     <span>Jane Doe</span>
-        //     <p>Hello</p>
-        //   </div>
-        // </div>
-        // <div className="item">
-        //   <img src="./avatar.png" />
-        //   <div className="texts">
-        //     <span>Jane Doe</span>
-        //     <p>Hello</p>
-        //   </div>
-        // </div>
         <div className="item" key={chat.chatId}>
           <img src="./avatar.png" />
           <div className="texts">
-            <span>Jane Doe</span>
+            <span>{chat.user.username}</span>
             <p>{chat.lastMessage}</p>
           </div>
         </div>
       ))}
-      <div className="item">
+      {/* <div className="item">
         <img src="./avatar.png" />
         <div className="texts">
           <span>Jane Doe</span>
           <p>Hello</p>
         </div>
-      </div>
+      </div> */}
       {addMode && <AddUser />}
     </div>
   )
